@@ -28,8 +28,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-#newly added 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # Application definition
 
 INSTALLED_APPS = [
@@ -130,3 +128,7 @@ MEDIA_ROOT=os.path.join(BASE_DIR,"media")
 STATIC_URL="/static/"
 STATIC_ROOT=os.path.join(BASE_DIR,"static")
 BASE_URL="http://127.0.0.1:8000"
+
+
+#newly added 
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
