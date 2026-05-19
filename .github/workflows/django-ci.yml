@@ -1,15 +1,16 @@
-name: Django CI Pipeline
+name: Django CI/CD Pipeline
 
 on:
   push:
-    branches:
-      - master
+    branches: [ master, main ]
   pull_request:
-    branches:
-      - master
+    branches: [ master, main ]
 
 jobs:
-  django-ci:
+
+  # ---------------- BUILD JOB ----------------
+  build:
+    name: Build Django Project
     runs-on: ubuntu-latest
 
     steps:
@@ -26,10 +27,43 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Run database migrations
-        run: |
-          python manage.py migrate
+  # ---------------- TEST JOB ----------------
+  test:
+    name: Test Django Project
+    runs-on: ubuntu-latest
+    needs: build
 
-      - name: Collect static files
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
         run: |
-          python manage.py collectstatic --noinput
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Django checks
+        run: |
+          python manage.py check
+
+      - name: Run migrations check
+        run: |
+          python manage.py makemigrations --check --dry-run
+          python manage.py migrate --check
+
+  # ---------------- DEPLOY JOB ----------------
+  deploy:
+    name: Deploy Application
+    runs-on: ubuntu-latest
+    needs: test
+    if: github.ref == 'refs/heads/master' || github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Deployment placeholder
+        run: |
+          echo "Deployment step executed successfully"
